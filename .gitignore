@@ -1,0 +1,30 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+!mvnw
+!mvnw.cmd
+# Build output
+build/
+out/
+# Node
+node_modules/
+npm-debug.log*
+# Env files
+.env
+.env.*
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+# Logs
+*.log
+# OS
+.DS_Store
+Thumbs.db
