@@ -3,6 +3,7 @@ package mostapha.bayi.demoescqrsaxon.commande.aggregate;
 import mostapha.bayi.demoescqrsaxon.commande.commands.AddAccountCommand;
 import mostapha.bayi.demoescqrsaxon.commande.commands.CreditAccountCommand;
 import mostapha.bayi.demoescqrsaxon.enums.AccountStatus;
+import mostapha.bayi.demoescqrsaxon.events.AccountActivatedEvent;
 import mostapha.bayi.demoescqrsaxon.events.AccountCreatedEvent;
 import mostapha.bayi.demoescqrsaxon.events.AccountCreditedEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,11 @@ public class AccountAggregate {
                 AccountStatus.CREATED,
                 command.getCurrency()
         ));
+        AggregateLifecycle.apply(
+                new AccountActivatedEvent(
+                        command.getId(),
+                        AccountStatus.ACTIVATED
+                ));
     }
 
     @EventSourcingHandler
