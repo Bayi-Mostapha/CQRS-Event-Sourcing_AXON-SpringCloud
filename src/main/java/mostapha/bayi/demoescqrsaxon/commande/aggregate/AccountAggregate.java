@@ -1,8 +1,10 @@
 package mostapha.bayi.demoescqrsaxon.commande.aggregate;
 
 import mostapha.bayi.demoescqrsaxon.commande.commands.AddAccountCommand;
+import mostapha.bayi.demoescqrsaxon.commande.commands.CreditAccountCommand;
 import mostapha.bayi.demoescqrsaxon.enums.AccountStatus;
 import mostapha.bayi.demoescqrsaxon.events.AccountCreatedEvent;
+import mostapha.bayi.demoescqrsaxon.events.AccountCreditedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -47,4 +49,23 @@ public class AccountAggregate {
         this.balance = event.getInitialBalance();
         this.status = event.getAccountStatus();
     }
+
+    @CommandHandler
+    public void handel(CreditAccountCommand command) {
+        //fonction de decision
+        log.info("############3 CreditAccountCommand received");
+        if (!status.equals(AccountStatus.ACTIVATED)) throw new RuntimeException("Status is not ACTIVATED for the account : "+ command.getId());
+        if (command.getAmount()<=0){
+            throw new IllegalArgumentException(
+                    "amount must be greater than zero"
+            );
+        }
+        AggregateLifecycle.apply(
+                new AccountCreditedEvent(
+                        command.getId(),
+                        command.getAmount(),
+                        command.getCurrency()
+                ));
+    }
+
 }
