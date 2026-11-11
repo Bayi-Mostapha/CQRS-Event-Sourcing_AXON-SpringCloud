@@ -2,7 +2,9 @@ package mostapha.bayi.demoescqrsaxon.commande.controllers;
 
 
 import mostapha.bayi.demoescqrsaxon.commande.commands.AddAccountCommand;
+import mostapha.bayi.demoescqrsaxon.commande.commands.CreditAccountCommand;
 import mostapha.bayi.demoescqrsaxon.commande.dtos.AddNewAccountRequestDTO;
+import mostapha.bayi.demoescqrsaxon.commande.dtos.CreditAccountRequestDTO;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +37,16 @@ public class AccountCommandController {
     @ExceptionHandler(Exception.class)
     public String exceptionHandler(Exception exception) {
         return exception.getMessage();
+    }
+
+    @PostMapping("/credit")
+    public CompletableFuture<String> creditAccount(@RequestBody CreditAccountRequestDTO request){
+        CompletableFuture<String> response = commandGateway.send(new CreditAccountCommand(
+                request.accountId(),
+                request.amount(),
+                request.currency()
+        ));
+        return response;
     }
 
     @GetMapping("/events/{accountId}")
