@@ -3,11 +3,9 @@ package mostapha.bayi.demoescqrsaxon.commande.aggregate;
 import mostapha.bayi.demoescqrsaxon.commande.commands.AddAccountCommand;
 import mostapha.bayi.demoescqrsaxon.commande.commands.CreditAccountCommand;
 import mostapha.bayi.demoescqrsaxon.commande.commands.DebitAccountCommand;
+import mostapha.bayi.demoescqrsaxon.commande.commands.UpdateAccountStatusCommand;
 import mostapha.bayi.demoescqrsaxon.enums.AccountStatus;
-import mostapha.bayi.demoescqrsaxon.events.AccountActivatedEvent;
-import mostapha.bayi.demoescqrsaxon.events.AccountCreatedEvent;
-import mostapha.bayi.demoescqrsaxon.events.AccountCreditedEvent;
-import mostapha.bayi.demoescqrsaxon.events.AccountDebitedEvent;
+import mostapha.bayi.demoescqrsaxon.events.*;
 import lombok.extern.slf4j.Slf4j;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -112,5 +110,25 @@ public class AccountAggregate {
         log.info("############3 AccountDebitedEvent occured");
         this.accountId = event.getAccountId();
         this.balance = this.balance - event.getAmount();
+    }
+
+    //update status
+    @CommandHandler
+    public void handle(UpdateAccountStatusCommand command) {
+        //fonction de decision
+        log.info("############3 UpdateAccountStatusCommand received");
+        if (command.getStatus()==status) throw new RuntimeException("The account status is already " + status);
+        AggregateLifecycle.apply(
+                new AccountStatusUpdatedEvent(
+                        command.getId(),
+                        command.getStatus()
+                ));
+    }
+
+    @EventSourcingHandler
+    public void on(AccountStatusUpdatedEvent event) {
+        log.info("############3 AccountStatusUpdatedEvent occured");
+        this.accountId = event.getAccountId();
+        this.status = event.getStatus();
     }
 }

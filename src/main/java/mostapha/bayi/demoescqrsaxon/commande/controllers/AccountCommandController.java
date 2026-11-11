@@ -4,9 +4,11 @@ package mostapha.bayi.demoescqrsaxon.commande.controllers;
 import mostapha.bayi.demoescqrsaxon.commande.commands.AddAccountCommand;
 import mostapha.bayi.demoescqrsaxon.commande.commands.CreditAccountCommand;
 import mostapha.bayi.demoescqrsaxon.commande.commands.DebitAccountCommand;
+import mostapha.bayi.demoescqrsaxon.commande.commands.UpdateAccountStatusCommand;
 import mostapha.bayi.demoescqrsaxon.commande.dtos.AddNewAccountRequestDTO;
 import mostapha.bayi.demoescqrsaxon.commande.dtos.CreditAccountRequestDTO;
 import mostapha.bayi.demoescqrsaxon.commande.dtos.DebitAccountRequestDTO;
+import mostapha.bayi.demoescqrsaxon.commande.dtos.UpdateAccountStatusDTO;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +61,15 @@ public class AccountCommandController {
                 request.currency()
         ));
         return response;
+    }
+
+    @PutMapping("/updateStatus")
+    public CompletableFuture<String> updateStatus(@RequestBody UpdateAccountStatusDTO request){
+        CompletableFuture<String> result = this.commandGateway.send(new UpdateAccountStatusCommand(
+                request.accountId(),
+                request.status()
+        ));
+        return result;
     }
 
     @GetMapping("/events/{accountId}")
