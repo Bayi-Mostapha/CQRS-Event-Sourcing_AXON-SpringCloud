@@ -6,6 +6,7 @@ import mostapha.bayi.demoescqrsaxon.query.entities.Account;
 import mostapha.bayi.demoescqrsaxon.query.entities.AccountOperation;
 import mostapha.bayi.demoescqrsaxon.query.queries.GetAccountStatementQuery;
 import mostapha.bayi.demoescqrsaxon.query.queries.GetAllAccountsQuery;
+import mostapha.bayi.demoescqrsaxon.query.queries.WatchEventQuery;
 import mostapha.bayi.demoescqrsaxon.query.repository.AccountRepository;
 import mostapha.bayi.demoescqrsaxon.query.repository.OperationRepository;
 import org.axonframework.queryhandling.QueryHandler;
@@ -33,6 +34,11 @@ public class AccountQueryHandler {
         Account account = accountRepository.findById(query.getAccountId()).get();
         List<AccountOperation> operations = operationRepository.findByAccountId(query.getAccountId());
         return new AccountStatementResponseDTO(account, operations);
+    }
+
+    @QueryHandler
+    public AccountOperation on (WatchEventQuery query) {
+        return AccountOperation.builder().build();
     }
 
 }
